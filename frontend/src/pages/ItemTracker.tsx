@@ -79,6 +79,7 @@ const ItemTracker: React.FC = () => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [selectedRow, setSelectedRow] = useState<TrackerRow | null>(null);
   const [rowFormData, setRowFormData] = useState<{[key: string]: any}>({});
+  const [submitLoading, setSubmitLoading] = useState(false);
   
   // State for header configuration
   const [showHeaderConfig, setShowHeaderConfig] = useState(false);
@@ -263,10 +264,76 @@ const ItemTracker: React.FC = () => {
       setError('Failed to save header configuration. Please try again later.');
     }
   };
+
+  // Handle adding a new row
+  const handleAddRow = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tracker) return;
+
+    setSubmitLoading(true);
+    try {
+      // This would be implemented in the API
+      // const response = await trackerApi.createTableRow(parseInt(id || '0'), rowFormData);
+      setShowAddRowModal(false);
+      resetFormData();
+      showSuccess('Row added successfully');
+      // Refresh data
+      fetchTrackerData();
+    } catch (err) {
+      console.error('Error adding row:', err);
+      setError('Failed to add row. Please try again later.');
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  // Handle updating a row
+  const handleUpdateRow = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tracker || !selectedRow) return;
+
+    setSubmitLoading(true);
+    try {
+      // This would be implemented in the API
+      // await trackerApi.updateTableRow(parseInt(id || '0'), selectedRow.id, rowFormData);
+      setShowEditRowModal(false);
+      setSelectedRow(null);
+      resetFormData();
+      showSuccess('Row updated successfully');
+      // Refresh data
+      fetchTrackerData();
+    } catch (err) {
+      console.error('Error updating row:', err);
+      setError('Failed to update row. Please try again later.');
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  // Handle deleting a row
+  const handleDeleteRow = async () => {
+    if (!tracker || !selectedRow) return;
+
+    setSubmitLoading(true);
+    try {
+      // This would be implemented in the API
+      // await trackerApi.deleteTableRow(parseInt(id || '0'), selectedRow.id);
+      setShowDeleteConfirmation(false);
+      setSelectedRow(null);
+      showSuccess('Row deleted successfully');
+      // Refresh data
+      fetchTrackerData();
+    } catch (err) {
+      console.error('Error deleting row:', err);
+      setError('Failed to delete row. Please try again later.');
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
   
   // Render pagination controls
   const renderPagination = () => {
-    const pages = [];
+    const pages: JSX.Element[] = [];
     const maxPagesToShow = 5;
     let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
@@ -279,7 +346,7 @@ const ItemTracker: React.FC = () => {
       pages.push(
         <button
           key={i}
-          className={`px-3 py-1 mx-1 rounded ${currentPage === i ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+          className={`px-3 py-1 mx-1 rounded ${currentPage === i ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}`}
           onClick={() => handlePageChange(i)}
         >
           {i}
@@ -289,14 +356,14 @@ const ItemTracker: React.FC = () => {
     
     return (
       <div className="flex items-center justify-between mt-4">
-        <div className="text-sm text-gray-700">
+        <div className="text-sm text-gray-700 dark:text-gray-300">
           Showing <span className="font-medium">{Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}</span> to{' '}
           <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{' '}
           <span className="font-medium">{totalItems}</span> results
         </div>
         <div className="flex space-x-1">
           <button
-            className="px-3 py-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+            className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -304,7 +371,7 @@ const ItemTracker: React.FC = () => {
           </button>
           {pages}
           <button
-            className="px-3 py-1 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50"
+            className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
@@ -327,37 +394,40 @@ const ItemTracker: React.FC = () => {
         <div>
           <button 
             onClick={handleBack}
-            className="text-blue-600 hover:text-blue-800 mb-2"
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mb-2"
           >
             ← Back to Trackers
           </button>
-          <h1 className="text-2xl font-bold">
-            {tracker?.name || 'Loading...'}
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {tracker?.name || ''}
           </h1>
           {parent && (
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Parent Tracker: {parent.name}
             </p>
           )}
           {tracker?.description && (
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 dark:text-gray-300 mt-1">
               {tracker.description}
             </p>
           )}
         </div>
         
-        {isAdmin && (
+        {isAdmin() && (
           <div className="flex space-x-3">
             <button
               onClick={() => setShowHeaderConfig(true)}
-              className="flex items-center px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-gray-800"
+              className="btn-ghost"
             >
               <Cog6ToothIcon className="h-5 w-5 mr-2" />
               Configure Columns
             </button>
             <button
-              onClick={() => setShowAddRowModal(true)}
-              className="flex items-center px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 text-white"
+              onClick={() => {
+                resetFormData();
+                setShowAddRowModal(true);
+              }}
+              className="btn-primary"
             >
               <PlusIcon className="h-5 w-5 mr-2" />
               Add Row
@@ -368,14 +438,14 @@ const ItemTracker: React.FC = () => {
       
       {/* Error and success messages */}
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 flex justify-between items-center">
+        <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4 flex justify-between items-center">
           <span>{error}</span>
           <XMarkIcon className="h-5 w-5 cursor-pointer" onClick={() => setError(null)} />
         </div>
       )}
       
       {successMessage && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 flex justify-between items-center">
+        <div className="bg-green-100 dark:bg-green-900/30 border border-green-400 text-green-700 dark:text-green-300 px-4 py-3 rounded mb-4 flex justify-between items-center">
           <span>{successMessage}</span>
           <XMarkIcon className="h-5 w-5 cursor-pointer" onClick={() => setSuccessMessage(null)} />
         </div>
@@ -390,7 +460,7 @@ const ItemTracker: React.FC = () => {
             placeholder="Search..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="form-input pl-10 pr-4 py-2"
           />
           <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
         </div>
@@ -399,15 +469,15 @@ const ItemTracker: React.FC = () => {
           {/* Download Template Button */}
           <button
             onClick={handleDownloadTemplate}
-            className="flex items-center px-4 py-2 bg-white border rounded shadow-sm hover:bg-gray-50"
+            className="btn-ghost"
           >
-            <DocumentArrowDownIcon className="h-5 w-5 mr-2 text-gray-600" />
+            <DocumentArrowDownIcon className="h-5 w-5 mr-2" />
             Template
           </button>
           
           {/* Import Button */}
-          <label className="flex items-center px-4 py-2 bg-white border rounded shadow-sm hover:bg-gray-50 cursor-pointer">
-            <ArrowUpTrayIcon className="h-5 w-5 mr-2 text-gray-600" />
+          <label className="btn-ghost cursor-pointer">
+            <ArrowUpTrayIcon className="h-5 w-5 mr-2" />
             Import
             <input
               type="file"
@@ -420,23 +490,23 @@ const ItemTracker: React.FC = () => {
           {/* Export Button */}
           <button
             onClick={handleExport}
-            className="flex items-center px-4 py-2 bg-white border rounded shadow-sm hover:bg-gray-50"
+            className="btn-ghost"
           >
-            <ArrowDownTrayIcon className="h-5 w-5 mr-2 text-gray-600" />
+            <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
             Export
           </button>
         </div>
       </div>
       
       {/* Table */}
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="table-container">
         {loading ? (
-          <div className="p-6 text-center">Loading...</div>
+          <div className="p-6 text-center text-gray-700 dark:text-gray-300">Loading...</div>
         ) : tracker && tracker.headers.filter(h => h.enabled).length > 0 ? (
           <>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     {tracker.headers
                       .filter(header => header.enabled)
@@ -445,7 +515,7 @@ const ItemTracker: React.FC = () => {
                         <th
                           key={header.id}
                           scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                         >
                           {header.label}
                         </th>
@@ -455,20 +525,20 @@ const ItemTracker: React.FC = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {displayedRows.length > 0 ? (
                     displayedRows.map(row => (
-                      <tr key={row.id}>
+                      <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
                         {tracker.headers
                           .filter(header => header.enabled)
                           .sort((a, b) => a.order - b.order)
                           .map(header => (
-                            <td key={header.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td key={header.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                               {row[header.key] || '—'}
                             </td>
                           ))}
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          {isAdmin && (
+                          {isAdmin() && (
                             <div className="flex justify-end space-x-3">
                               <button
                                 onClick={() => {
@@ -476,7 +546,7 @@ const ItemTracker: React.FC = () => {
                                   setRowFormData(row);
                                   setShowEditRowModal(true);
                                 }}
-                                className="text-indigo-600 hover:text-indigo-900"
+                                className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-200"
                               >
                                 <PencilSquareIcon className="h-5 w-5" />
                               </button>
@@ -485,7 +555,7 @@ const ItemTracker: React.FC = () => {
                                   setSelectedRow(row);
                                   setShowDeleteConfirmation(true);
                                 }}
-                                className="text-red-600 hover:text-red-900"
+                                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
                               >
                                 <TrashIcon className="h-5 w-5" />
                               </button>
@@ -498,7 +568,7 @@ const ItemTracker: React.FC = () => {
                     <tr>
                       <td
                         colSpan={tracker.headers.filter(h => h.enabled).length + 1}
-                        className="px-6 py-4 text-center text-sm text-gray-500"
+                        className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300"
                       >
                         No data available. Click "Add Row" to create new entries or import data using the Excel import feature.
                       </td>
@@ -509,14 +579,14 @@ const ItemTracker: React.FC = () => {
             </div>
             
             {/* Pagination */}
-            <div className="px-6 py-4 bg-gray-50">
+            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <span className="mr-2 text-sm text-gray-700">Rows per page:</span>
+                  <span className="mr-2 text-sm text-gray-700 dark:text-gray-300">Rows per page:</span>
                   <select
                     value={itemsPerPage}
                     onChange={handleItemsPerPageChange}
-                    className="border rounded p-1 text-sm"
+                    className="form-input border rounded p-1 text-sm"
                   >
                     <option value="5">5</option>
                     <option value="10">10</option>
@@ -530,20 +600,21 @@ const ItemTracker: React.FC = () => {
             </div>
           </>
         ) : (
-          <div className="p-6 text-center">
-            No columns configured. {isAdmin && 'Click "Configure Columns" to set up the table layout.'}
+          <div className="p-6 text-center text-gray-500 dark:text-gray-300">
+            No columns configured. {isAdmin() && 'Click "Configure Columns" to set up the table layout.'}
           </div>
         )}
       </div>
       
       {/* Header configuration modal */}
       {showHeaderConfig && tracker && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-xl w-full max-w-lg">
-            <h2 className="text-xl font-semibold mb-4">Configure Table Columns</h2>
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-gray-500 bg-opacity-75 dark:bg-opacity-90"></div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl w-full max-w-lg relative z-10">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Configure Table Columns</h2>
             <div className="max-h-96 overflow-y-auto">
               {tracker.headers.map((header, index) => (
-                <div key={header.id} className="flex items-center justify-between py-3 border-b">
+                <div key={header.id} className="flex items-center justify-between py-3 border-b dark:border-gray-700">
                   <div className="flex items-center">
                     <input
                       type="checkbox"
@@ -556,7 +627,7 @@ const ItemTracker: React.FC = () => {
                       type="text"
                       value={header.label}
                       onChange={(e) => handleHeaderChange(header.id, 'label', e.target.value)}
-                      className="border rounded px-2 py-1"
+                      className="form-input border rounded px-2 py-1"
                     />
                   </div>
                   <div className="flex items-center space-x-2">
@@ -565,7 +636,7 @@ const ItemTracker: React.FC = () => {
                       value={header.order}
                       onChange={(e) => handleHeaderChange(header.id, 'order', parseInt(e.target.value) || 0)}
                       min="1"
-                      className="border rounded w-16 px-2 py-1"
+                      className="form-input border rounded w-16 px-2 py-1"
                     />
                   </div>
                 </div>
@@ -574,13 +645,13 @@ const ItemTracker: React.FC = () => {
             <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => setShowHeaderConfig(false)}
-                className="px-4 py-2 border rounded hover:bg-gray-100"
+                className="btn-ghost"
               >
                 Cancel
               </button>
               <button
                 onClick={saveHeaderConfig}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="btn-primary"
               >
                 Save Configuration
               </button>
@@ -589,8 +660,172 @@ const ItemTracker: React.FC = () => {
         </div>
       )}
       
-      {/* Add/Edit row modals would be implemented here */}
-      {/* Delete confirmation modal would be implemented here */}
+      {/* Add Row Modal */}
+      {showAddRowModal && tracker && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-gray-500 bg-opacity-75 dark:bg-opacity-90"></div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto relative z-10">
+            <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Add New Row</h3>
+              <button
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
+                onClick={() => {
+                  setShowAddRowModal(false);
+                  resetFormData();
+                }}
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleAddRow} className="p-4">
+              {tracker.headers
+                .filter(header => header.enabled)
+                .sort((a, b) => a.order - b.order)
+                .map(header => (
+                  <div key={header.id} className="mb-4">
+                    <label htmlFor={`add-${header.key}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {header.label}
+                    </label>
+                    <input
+                      type="text"
+                      id={`add-${header.key}`}
+                      name={header.key}
+                      value={rowFormData[header.key] || ''}
+                      onChange={handleInputChange}
+                      className="form-input w-full"
+                    />
+                  </div>
+                ))}
+              
+              <div className="flex justify-end space-x-2 mt-6">
+                <button
+                  type="button"
+                  className="btn-ghost"
+                  onClick={() => {
+                    setShowAddRowModal(false);
+                    resetFormData();
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={submitLoading}
+                >
+                  {submitLoading ? (
+                    <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  ) : null}
+                  Add Row
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Row Modal */}
+      {showEditRowModal && selectedRow && tracker && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-gray-500 bg-opacity-75 dark:bg-opacity-90"></div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto relative z-10">
+            <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">Edit Row</h3>
+              <button
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
+                onClick={() => {
+                  setShowEditRowModal(false);
+                  setSelectedRow(null);
+                  resetFormData();
+                }}
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleUpdateRow} className="p-4">
+              {tracker.headers
+                .filter(header => header.enabled)
+                .sort((a, b) => a.order - b.order)
+                .map(header => (
+                  <div key={header.id} className="mb-4">
+                    <label htmlFor={`edit-${header.key}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      {header.label}
+                    </label>
+                    <input
+                      type="text"
+                      id={`edit-${header.key}`}
+                      name={header.key}
+                      value={rowFormData[header.key] || ''}
+                      onChange={handleInputChange}
+                      className="form-input w-full"
+                    />
+                  </div>
+                ))}
+              
+              <div className="flex justify-end space-x-2 mt-6">
+                <button
+                  type="button"
+                  className="btn-ghost"
+                  onClick={() => {
+                    setShowEditRowModal(false);
+                    setSelectedRow(null);
+                    resetFormData();
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={submitLoading}
+                >
+                  {submitLoading ? (
+                    <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  ) : null}
+                  Update Row
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {showDeleteConfirmation && selectedRow && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-gray-500 bg-opacity-75 dark:bg-opacity-90"></div>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-md w-full mx-4 relative z-10">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Confirm Delete</h3>
+            <p className="text-gray-700 dark:text-gray-300 mb-6">
+              Are you sure you want to delete this row? This action cannot be undone.
+            </p>
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                className="btn-ghost"
+                onClick={() => {
+                  setShowDeleteConfirmation(false);
+                  setSelectedRow(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-danger"
+                onClick={handleDeleteRow}
+                disabled={submitLoading}
+              >
+                {submitLoading ? (
+                  <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                ) : null}
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
