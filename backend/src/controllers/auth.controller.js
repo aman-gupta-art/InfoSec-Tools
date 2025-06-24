@@ -4,6 +4,29 @@ const db = require('../models');
 const User = db.users;
 const ActivityLog = db.activityLogs;
 
+// Default fallback JWT settings - used only as a last resort
+const DEFAULT_JWT_SECRET = 'infosec_tools_secret_key_FOR_DEVELOPMENT_ONLY';
+const DEFAULT_JWT_EXPIRATION = 86400; // 24 hours
+
+// Check for JWT secret and warn if using default
+if (!process.env.JWT_SECRET) {
+  console.warn('WARNING: JWT_SECRET environment variable not set!');
+  console.warn('Using default JWT secret. This is insecure and should not be used in production.');
+}
+
+// Generate JWT token with proper error handling
+const generateToken = (userId) => {
+  const jwtSecret = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
+  const jwtExpiration = process.env.JWT_EXPIRATION ? parseInt(process.env.JWT_EXPIRATION) : DEFAULT_JWT_EXPIRATION;
+  
+  try {
+    return jwt.sign({ id: userId }, jwtSecret, { expiresIn: jwtExpiration });
+  } catch (error) {
+    console.error('Error generating JWT token:', error);
+    throw new Error('Authentication error: Could not generate token');
+  }
+};
+
 // Register new user (admin only)
 exports.register = async (req, res) => {
   try {
@@ -77,14 +100,8 @@ exports.login = async (req, res) => {
     user.lastLogin = new Date();
     await user.save();
 
-    // Generate token
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.JWT_SECRET || 'infosec_tools_secret_key',
-      {
-        expiresIn: process.env.JWT_EXPIRATION || 86400 // 24 hours
-      }
-    );
+    // Generate token using the helper function
+    const token = generateToken(user.id);
 
     // Log activity
     await ActivityLog.create({

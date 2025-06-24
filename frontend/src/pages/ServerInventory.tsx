@@ -14,7 +14,6 @@ import {
 import { serverApi } from '../services/api.js';
 import { useAuth } from '../context/AuthContext.tsx';
 import { useNavigate } from 'react-router-dom';
-// import FilterDebug from '../components/FilterDebug';
 
 interface Server {
   id: number;
@@ -1858,9 +1857,6 @@ const ServerInventory: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Add the debug component */}
-      {/* <FilterDebug /> */}
     </div>
   );
 };

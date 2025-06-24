@@ -56,37 +56,50 @@ const initDb = async () => {
     const User = db.users;
     const adminExists = await User.findOne({
       where: {
-        username: 'admin'
+        username: process.env.ADMIN_USERNAME || 'admin'
       }
     });
+    
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
     
     if (!adminExists) {
       await User.create({
-        username: 'admin',
-        password: bcrypt.hashSync('admin123', 8),
+        username: adminUsername,
+        password: bcrypt.hashSync(adminPassword, 8),
         role: 'admin',
-        firstName: 'Admin',
-        lastName: 'User'
+        firstName: process.env.ADMIN_FIRSTNAME || 'Admin',
+        lastName: process.env.ADMIN_LASTNAME || 'User'
       });
-      console.log('Default admin user created. Username: admin, Password: admin123');
+      console.log(`Default admin user created. Username: ${adminUsername}, Password: ${adminPassword}`);
+      
+      if (process.env.NODE_ENV !== 'development') {
+        console.warn('WARNING: Using default admin credentials in non-development environment!');
+        console.warn('Please change the admin password immediately after first login.');
+      }
     }
 
-    // Create a read-only user for testing
-    const readonlyExists = await User.findOne({
-      where: {
-        username: 'user'
-      }
-    });
+    // Create a read-only user for testing (only in development)
+    const regularUsername = process.env.USER_USERNAME || 'user';
+    const regularPassword = process.env.USER_PASSWORD || 'user123';
     
-    if (!readonlyExists) {
-      await User.create({
-        username: 'user',
-        password: bcrypt.hashSync('user123', 8),
-        role: 'readonly',
-        firstName: 'Regular',
-        lastName: 'User'
+    if (process.env.NODE_ENV === 'development') {
+      const readonlyExists = await User.findOne({
+        where: {
+          username: regularUsername
+        }
       });
-      console.log('Default readonly user created. Username: user, Password: user123');
+      
+      if (!readonlyExists) {
+        await User.create({
+          username: regularUsername,
+          password: bcrypt.hashSync(regularPassword, 8),
+          role: 'readonly',
+          firstName: process.env.USER_FIRSTNAME || 'Regular',
+          lastName: process.env.USER_LASTNAME || 'User'
+        });
+        console.log(`Development read-only user created. Username: ${regularUsername}, Password: ${regularPassword}`);
+      }
     }
     
   } catch (error) {

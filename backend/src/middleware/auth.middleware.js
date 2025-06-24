@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const db = require('../models');
 const User = db.users;
 
+// Default fallback JWT secret - same as in auth.controller.js
+const DEFAULT_JWT_SECRET = 'infosec_tools_secret_key_FOR_DEVELOPMENT_ONLY';
+
 const verifyToken = (req, res, next) => {
   const token = req.headers['x-access-token'] || req.headers.authorization?.split(' ')[1];
 
@@ -12,7 +15,9 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'infosec_tools_secret_key');
+    // Use same secret as in auth.controller.js
+    const jwtSecret = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
+    const decoded = jwt.verify(token, jwtSecret);
     req.userId = decoded.id;
     next();
   } catch (error) {
