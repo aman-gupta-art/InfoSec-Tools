@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Custom button styles */
+@layer components {
+  /* Primary Button */
+  .btn-primary {
+    @apply inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-md font-medium text-xs text-white tracking-widest hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200 ease-in-out shadow-sm;
+  }
+  
+  /* Secondary Button */
+  .btn-secondary {
+    @apply inline-flex items-center px-4 py-2 bg-secondary-100 border border-transparent rounded-md font-medium text-xs text-secondary-700 tracking-widest hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-secondary-400 focus:ring-offset-2 transition-colors duration-200 ease-in-out shadow-sm;
+  }
+  
+  /* Success Button */
+  .btn-success {
+    @apply inline-flex items-center px-4 py-2 bg-success-600 border border-transparent rounded-md font-medium text-xs text-white tracking-widest hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-success-500 focus:ring-offset-2 transition-colors duration-200 ease-in-out shadow-sm;
+  }
+  
+  /* Danger Button */
+  .btn-danger {
+    @apply inline-flex items-center px-4 py-2 bg-danger-600 border border-transparent rounded-md font-medium text-xs text-white tracking-widest hover:bg-danger-700 focus:outline-none focus:ring-2 focus:ring-danger-500 focus:ring-offset-2 transition-colors duration-200 ease-in-out shadow-sm;
+  }
+  
+  /* Warning Button */
+  .btn-warning {
+    @apply inline-flex items-center px-4 py-2 bg-warning-500 border border-transparent rounded-md font-medium text-xs text-white tracking-widest hover:bg-warning-600 focus:outline-none focus:ring-2 focus:ring-warning-400 focus:ring-offset-2 transition-colors duration-200 ease-in-out shadow-sm;
+  }
+  
+  /* Info Button */
+  .btn-info {
+    @apply inline-flex items-center px-4 py-2 bg-info-600 border border-transparent rounded-md font-medium text-xs text-white tracking-widest hover:bg-info-700 focus:outline-none focus:ring-2 focus:ring-info-500 focus:ring-offset-2 transition-colors duration-200 ease-in-out shadow-sm;
+  }
+  
+  /* Ghost Button */
+  .btn-ghost {
+    @apply inline-flex items-center px-4 py-2 bg-transparent border border-gray-300 dark:border-gray-600 rounded-md font-medium text-xs text-gray-700 dark:text-gray-300 tracking-widest hover:bg-gray-50 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200 ease-in-out;
+  }
+  
+  /* Card styles */
+  .card {
+    @apply bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg transition-shadow duration-300 ease-in-out;
+  }
+  
+  /* Card hover effect */
+  .card-hover {
+    @apply hover:shadow-lg transition-shadow duration-300 ease-in-out;
+  }
+  
+  /* Form input styles */
+  .form-input {
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+  
+  /* Table styles */
+  .table-container {
+    @apply bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg;
+  }
+  
+  /* Status badge styles */
+  .status-badge {
+    @apply px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full;
+  }
+  
+  .status-badge-success {
+    @apply bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300;
+  }
+  
+  .status-badge-danger {
+    @apply bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-300;
+  }
+  
+  .status-badge-warning {
+    @apply bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-300;
+  }
+  
+  .status-badge-info {
+    @apply bg-info-100 text-info-800 dark:bg-info-900/30 dark:text-info-300;
+  }
+  
+  /* Transitions */
+  .transition-all-fast {
+    @apply transition-all duration-200 ease-in-out;
+  }
+}
+
+/* Dark mode improvements */
+.dark .card {
+  @apply shadow-lg border border-gray-700;
+} 
