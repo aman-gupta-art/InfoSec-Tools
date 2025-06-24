@@ -14,7 +14,7 @@ import { useAuth } from '../context/AuthContext.tsx';
 // Define tracker data interfaces
 interface TrackerItem {
   id: number;
-  name: string;
+  name?: string;
   description?: string;
   parentId: number | null;
   ownership?: string;
@@ -54,14 +54,14 @@ const Trackers: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
     description: '',
     ownership: '',
     reviewer: '',
     frequency: '',
     status: '',
     remarks: '',
-    timelines: ''
+    timelines: '',
+    name: ''
   });
 
   // Fetch trackers from API
@@ -134,14 +134,14 @@ const Trackers: React.FC = () => {
   // Reset form data
   const resetFormData = () => {
     setFormData({
-      name: '',
       description: '',
       ownership: '',
       reviewer: '',
       frequency: '',
       status: '',
       remarks: '',
-      timelines: ''
+      timelines: '',
+      name: ''
     });
   };
 
@@ -220,14 +220,14 @@ const Trackers: React.FC = () => {
   const openEditModal = (tracker: TrackerItem) => {
     setSelectedTracker(tracker);
     setFormData({
-      name: tracker.name,
       description: tracker.description || '',
       ownership: tracker.ownership || '',
       reviewer: tracker.reviewer || '',
       frequency: tracker.frequency || '',
       status: tracker.status || '',
       remarks: tracker.remarks || '',
-      timelines: tracker.timelines || ''
+      timelines: tracker.timelines || '',
+      name: tracker.name || ''
     });
     setShowEditModal(true);
   };
@@ -424,7 +424,7 @@ const Trackers: React.FC = () => {
                   ) : (
                     <ChevronDownIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
                   )}
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">{tracker.name}</h3>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">{tracker.name || 'Untitled Tracker'}</h3>
                 </div>
                 
                 <div className="flex space-x-2">
@@ -475,7 +475,6 @@ const Trackers: React.FC = () => {
                       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead className="bg-gray-50 dark:bg-gray-700">
                           <tr>
-                            <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
                             <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Description</th>
                             <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Frequency</th>
                             <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ownership</th>
@@ -491,7 +490,6 @@ const Trackers: React.FC = () => {
                         <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                           {tracker.items.map(item => (
                             <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                              <td className="px-3 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{item.name}</td>
                               <td className="px-3 py-3 text-sm text-gray-500 dark:text-gray-300">{item.description}</td>
                               <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.frequency}</td>
                               <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.ownership}</td>
@@ -620,19 +618,6 @@ const Trackers: React.FC = () => {
             
             <form onSubmit={handleEditTracker} className="p-4">
               <div className="mb-4">
-                <label htmlFor="editName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name *</label>
-                <input
-                  type="text"
-                  id="editName"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="form-input w-full"
-                  required
-                />
-              </div>
-              
-              <div className="mb-4">
                 <label htmlFor="editDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                 <textarea
                   id="editDescription"
@@ -758,19 +743,6 @@ const Trackers: React.FC = () => {
             
             <form onSubmit={handleAddItem} className="p-4">
               <div className="mb-4">
-                <label htmlFor="itemName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name *</label>
-                <input
-                  type="text"
-                  id="itemName"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="form-input w-full dark:bg-gray-700 dark:text-white"
-                  required
-                />
-              </div>
-              
-              <div className="mb-4">
                 <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                 <textarea
                   id="itemDescription"
@@ -779,6 +751,7 @@ const Trackers: React.FC = () => {
                   onChange={handleInputChange}
                   className="form-textarea w-full dark:bg-gray-700 dark:text-white"
                   rows={3}
+                  required
                 ></textarea>
               </div>
               
@@ -900,7 +873,7 @@ const Trackers: React.FC = () => {
                     </h3>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Are you sure you want to delete <span className="font-semibold">{selectedTracker.name}</span>? This action cannot be undone.
+                        Are you sure you want to delete <span className="font-semibold">{selectedTracker.name || 'Untitled Tracker'}</span>? This action cannot be undone.
                       </p>
                       {!selectedTracker.parentId && selectedTracker.items && selectedTracker.items.length > 0 && (
                         <p className="mt-2 text-sm text-danger-600 dark:text-danger-400">
