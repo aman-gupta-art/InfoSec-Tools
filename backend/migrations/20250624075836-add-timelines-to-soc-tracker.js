@@ -3,20 +3,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
+    // Add timelines column to soc_trackers table
+    await queryInterface.addColumn('soc_trackers', 'timelines', {
+      type: Sequelize.STRING,
+      allowNull: true
+    });
+    console.log('Added timelines column to soc_trackers table');
   },
 
   async down (queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    // Remove timelines column from soc_trackers table
+    await queryInterface.removeColumn('soc_trackers', 'timelines');
+    console.log('Removed timelines column from soc_trackers table');
   }
 };
