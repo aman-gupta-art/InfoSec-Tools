@@ -333,49 +333,74 @@ const ItemTracker: React.FC = () => {
   
   // Render pagination controls
   const renderPagination = () => {
-    const pages: JSX.Element[] = [];
-    const maxPagesToShow = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    const renderPageButton = (pageNum: number) => (
+      <button
+        key={pageNum}
+        onClick={() => handlePageChange(pageNum)}
+        className={`px-4 py-2 border-y border-r ${
+          currentPage === pageNum
+            ? 'bg-primary-600 text-white font-medium'
+            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+        }`}
+      >
+        {pageNum}
+      </button>
+    );
+
+    // Calculate pages to show (max 5)
+    const totalPageButtons = Math.min(5, totalPages);
+    const currentPageIndex = Math.min(
+      Math.max(0, currentPage - 1),
+      Math.max(0, totalPages - totalPageButtons)
+    );
     
-    if (endPage - startPage + 1 < maxPagesToShow) {
-      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    const pageButtons: JSX.Element[] = [];
+    for (let i = 1; i <= totalPageButtons; i++) {
+      const pageNum = currentPageIndex + i;
+      if (pageNum <= totalPages) {
+        pageButtons.push(renderPageButton(pageNum));
+      }
     }
-    
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(
-        <button
-          key={i}
-          className={`px-3 py-1 mx-1 rounded ${currentPage === i ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}`}
-          onClick={() => handlePageChange(i)}
-        >
-          {i}
-        </button>
-      );
-    }
-    
+
     return (
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex items-center justify-between">
         <div className="text-sm text-gray-700 dark:text-gray-300">
-          Showing <span className="font-medium">{Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}</span> to{' '}
-          <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{' '}
-          <span className="font-medium">{totalItems}</span> results
+          Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
         </div>
-        <div className="flex space-x-1">
+        
+        <div className="flex items-center">
+          <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">Show</span>
+          <select
+            value={itemsPerPage}
+            onChange={handleItemsPerPageChange}
+            className="form-input border rounded p-1 text-sm"
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <span className="text-sm text-gray-700 dark:text-gray-300 ml-2">per page</span>
+        </div>
+        
+        <div className="flex">
           <button
-            className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
+            className="px-4 py-2 border rounded-l bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
           >
-            Previous
+            &#8592;
           </button>
-          {pages}
+          
+          {pageButtons}
+          
           <button
-            className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
+            className="px-4 py-2 border-y border-r rounded-r bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
           >
-            Next
+            &#8594;
           </button>
         </div>
       </div>
@@ -580,23 +605,7 @@ const ItemTracker: React.FC = () => {
             
             {/* Pagination */}
             <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <span className="mr-2 text-sm text-gray-700 dark:text-gray-300">Rows per page:</span>
-                  <select
-                    value={itemsPerPage}
-                    onChange={handleItemsPerPageChange}
-                    className="form-input border rounded p-1 text-sm"
-                  >
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </div>
-                {renderPagination()}
-              </div>
+              {renderPagination()}
             </div>
           </>
         ) : (
