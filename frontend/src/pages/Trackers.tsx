@@ -17,7 +17,6 @@ interface TrackerItem {
   name: string;
   description?: string;
   parentId: number | null;
-  trackerLink?: string;
   ownership?: string;
   reviewer?: string;
   frequency?: string;
@@ -57,7 +56,6 @@ const Trackers: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    trackerLink: '',
     ownership: '',
     reviewer: '',
     frequency: '',
@@ -138,7 +136,6 @@ const Trackers: React.FC = () => {
     setFormData({
       name: '',
       description: '',
-      trackerLink: '',
       ownership: '',
       reviewer: '',
       frequency: '',
@@ -188,10 +185,12 @@ const Trackers: React.FC = () => {
     if (selectedParentId === null) return;
     
     try {
+      // Send the data to the API
       await trackerApi.createTracker({
         ...formData,
         parentId: selectedParentId
       });
+      
       setShowAddItemModal(false);
       resetFormData();
       setSelectedParentId(null);
@@ -217,13 +216,12 @@ const Trackers: React.FC = () => {
     }
   };
 
-  // Open edit modal with tracker data
+  // Function to open the edit modal with selected tracker data
   const openEditModal = (tracker: TrackerItem) => {
     setSelectedTracker(tracker);
     setFormData({
       name: tracker.name,
       description: tracker.description || '',
-      trackerLink: tracker.trackerLink || '',
       ownership: tracker.ownership || '',
       reviewer: tracker.reviewer || '',
       frequency: tracker.frequency || '',
@@ -484,6 +482,7 @@ const Trackers: React.FC = () => {
                             <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Reviewer</th>
                             <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Timelines</th>
                             <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                            <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Remarks</th>
                             {isAdmin() && (
                               <th scope="col" className="px-3 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                             )}
@@ -499,6 +498,7 @@ const Trackers: React.FC = () => {
                               <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.reviewer}</td>
                               <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.timelines}</td>
                               <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{item.status}</td>
+                              <td className="px-3 py-3 text-sm text-gray-500 dark:text-gray-300">{item.remarks}</td>
                               {isAdmin() && (
                                 <td className="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
                                   <button
@@ -644,19 +644,6 @@ const Trackers: React.FC = () => {
                 ></textarea>
               </div>
               
-              <div className="mb-4">
-                <label htmlFor="editTrackerLink" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tracker Link</label>
-                <input
-                  type="text"
-                  id="editTrackerLink"
-                  name="trackerLink"
-                  value={formData.trackerLink}
-                  onChange={handleInputChange}
-                  className="form-input w-full dark:bg-gray-700 dark:text-white"
-                  placeholder="https://..."
-                />
-              </div>
-              
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
                   <label htmlFor="editOwnership" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ownership</label>
@@ -793,19 +780,6 @@ const Trackers: React.FC = () => {
                   className="form-textarea w-full dark:bg-gray-700 dark:text-white"
                   rows={3}
                 ></textarea>
-              </div>
-              
-              <div className="mb-4">
-                <label htmlFor="itemTrackerLink" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tracker Link</label>
-                <input
-                  type="text"
-                  id="itemTrackerLink"
-                  name="trackerLink"
-                  value={formData.trackerLink}
-                  onChange={handleInputChange}
-                  className="form-input w-full dark:bg-gray-700 dark:text-white"
-                  placeholder="https://..."
-                />
               </div>
               
               <div className="grid grid-cols-2 gap-4 mb-4">
