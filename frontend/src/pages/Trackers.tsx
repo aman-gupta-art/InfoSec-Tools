@@ -6,10 +6,12 @@ import {
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
-  XMarkIcon
+  XMarkIcon,
+  TableCellsIcon
 } from '@heroicons/react/24/outline';
 import { trackerApi } from '../services/api.ts';
 import { useAuth } from '../context/AuthContext.tsx';
+import { useNavigate } from 'react-router-dom';
 
 // Define tracker data interfaces
 interface TrackerItem {
@@ -63,6 +65,7 @@ const Trackers: React.FC = () => {
     timelines: '',
     name: ''
   });
+  const navigate = useNavigate();
 
   // Fetch trackers from API
   const fetchTrackers = useCallback(async () => {
@@ -499,6 +502,13 @@ const Trackers: React.FC = () => {
                               <td className="px-3 py-3 text-sm text-gray-500 dark:text-gray-300">{item.remarks}</td>
                               {isAdmin() && (
                                 <td className="px-3 py-3 whitespace-nowrap text-right text-sm font-medium">
+                                  <button
+                                    className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3"
+                                    onClick={() => navigate(`/tracker/${item.id}`)}
+                                    title="Open Tracker"
+                                  >
+                                    <TableCellsIcon className="h-5 w-5" />
+                                  </button>
                                   <button
                                     className="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-3"
                                     onClick={() => openEditModal(item)}

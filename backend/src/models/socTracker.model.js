@@ -61,6 +61,17 @@ module.exports = (sequelize, Sequelize) => {
       as: 'parent',
       foreignKey: 'parentId'
     });
+    
+    // Add associations to tracker table components
+    SOCTracker.hasMany(models.trackerHeader, {
+      foreignKey: 'trackerId',
+      as: 'headers'
+    });
+    
+    SOCTracker.hasMany(models.trackerRow, {
+      foreignKey: 'trackerId',
+      as: 'rows'
+    });
   };
 
   return SOCTracker;

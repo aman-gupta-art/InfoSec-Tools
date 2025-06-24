@@ -201,6 +201,55 @@ export const trackerApi = {
   // Delete a tracker
   deleteTracker: async (id: number) => {
     return api.delete(`/trackers/${id}`);
+  },
+  
+  // Get tracker table data
+  getTrackerTableData: async (trackerId: number, params?: any) => {
+    return api.get(`/trackers/${trackerId}/table-data`, { params });
+  },
+  
+  // Update tracker table headers
+  updateTrackerHeaders: async (trackerId: number, headers: any) => {
+    return api.put(`/trackers/${trackerId}/headers`, { headers });
+  },
+  
+  // Create a new table row
+  createTableRow: async (trackerId: number, rowData: any) => {
+    return api.post(`/trackers/${trackerId}/rows`, rowData);
+  },
+  
+  // Update a table row
+  updateTableRow: async (trackerId: number, rowId: number, rowData: any) => {
+    return api.put(`/trackers/${trackerId}/rows/${rowId}`, rowData);
+  },
+  
+  // Delete a table row
+  deleteTableRow: async (trackerId: number, rowId: number) => {
+    return api.delete(`/trackers/${trackerId}/rows/${rowId}`);
+  },
+  
+  // Import table data from Excel
+  importTableData: async (trackerId: number, formData: FormData) => {
+    return api.post(`/trackers/${trackerId}/import`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  // Export table data to Excel
+  exportTableData: async (trackerId: number, params?: any) => {
+    return api.get(`/trackers/${trackerId}/export`, {
+      params,
+      responseType: 'blob',
+    });
+  },
+  
+  // Get table import template
+  getTableTemplate: async (trackerId: number) => {
+    return api.get(`/trackers/${trackerId}/template`, {
+      responseType: 'blob',
+    });
   }
 };
 
