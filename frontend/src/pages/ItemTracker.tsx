@@ -85,7 +85,7 @@ const ItemTracker: React.FC = () => {
   const [showHeaderConfig, setShowHeaderConfig] = useState(false);
   const [defaultHeaders] = useState<HeaderConfig[]>([
     { id: 1, key: 'name', label: 'Name', enabled: true, order: 1 },
-    { id: 2, key: 'description', label: 'Description', enabled: true, order: 2 },
+    { id: 2, key: 'details', label: 'Details', enabled: true, order: 2 },
     { id: 3, key: 'status', label: 'Status', enabled: true, order: 3 },
     { id: 4, key: 'owner', label: 'Owner', enabled: true, order: 4 },
     { id: 5, key: 'date', label: 'Date', enabled: true, order: 5 },
@@ -333,6 +333,50 @@ const ItemTracker: React.FC = () => {
   
   // Render pagination controls
   const renderPagination = () => {
+    // If there's no data, show a simplified pagination control like in the image
+    if (displayedRows.length === 0 || totalItems === 0) {
+      return (
+        <div className="flex items-center justify-between px-6 py-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+          <div className="text-sm text-gray-500 dark:text-gray-300">
+            No results found
+          </div>
+          <div className="flex items-center">
+            <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">Show</span>
+            <div className="relative inline-block">
+              <select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                className="form-input appearance-none bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-1 pl-3 pr-8 rounded-md"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                <ChevronDownIcon className="h-4 w-4" />
+              </div>
+            </div>
+            <span className="text-sm text-gray-700 dark:text-gray-300 ml-2 mr-4">per page</span>
+            
+            <button
+              disabled={true}
+              className="px-3 py-1 border rounded-l bg-white dark:bg-gray-800 text-gray-300 dark:text-gray-600 border-gray-300 dark:border-gray-600"
+            >
+              &#8592;
+            </button>
+            <button
+              disabled={true}
+              className="px-3 py-1 border-y border-r rounded-r bg-white dark:bg-gray-800 text-gray-300 dark:text-gray-600 border-gray-300 dark:border-gray-600"
+            >
+              &#8594;
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     const renderPageButton = (pageNum: number) => (
       <button
         key={pageNum}
@@ -363,32 +407,39 @@ const ItemTracker: React.FC = () => {
     }
 
     return (
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-6 py-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
         <div className="text-sm text-gray-700 dark:text-gray-300">
           Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
         </div>
         
         <div className="flex items-center">
           <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">Show</span>
-          <select
-            value={itemsPerPage}
-            onChange={handleItemsPerPageChange}
-            className="form-input border rounded p-1 text-sm"
-          >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          <span className="text-sm text-gray-700 dark:text-gray-300 ml-2">per page</span>
-        </div>
-        
-        <div className="flex">
+          <div className="relative inline-block">
+            <select
+              value={itemsPerPage}
+              onChange={handleItemsPerPageChange}
+              className="form-input appearance-none bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-1 pl-3 pr-8 rounded-md"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+              <ChevronDownIcon className="h-4 w-4" />
+            </div>
+          </div>
+          <span className="text-sm text-gray-700 dark:text-gray-300 ml-2 mr-4">per page</span>
+          
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 border rounded-l bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+            className={`px-3 py-1 border rounded-l ${
+              currentPage === 1
+                ? 'bg-white dark:bg-gray-800 text-gray-300 dark:text-gray-600'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+            } border-gray-300 dark:border-gray-600`}
           >
             &#8592;
           </button>
@@ -398,7 +449,11 @@ const ItemTracker: React.FC = () => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 border-y border-r rounded-r bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+            className={`px-3 py-1 border-y border-r rounded-r ${
+              currentPage === totalPages
+                ? 'bg-white dark:bg-gray-800 text-gray-300 dark:text-gray-600'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+            } border-gray-300 dark:border-gray-600`}
           >
             &#8594;
           </button>
@@ -423,18 +478,15 @@ const ItemTracker: React.FC = () => {
           >
             ← Back to Trackers
           </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {tracker?.name || ''}
-          </h1>
           {parent && (
             <p className="text-gray-600 dark:text-gray-300">
               Parent Tracker: {parent.name}
             </p>
           )}
-          {tracker?.description && (
-            <p className="text-gray-600 dark:text-gray-300 mt-1">
-              {tracker.description}
-            </p>
+          {tracker?.name && (
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {tracker.name}
+            </h1>
           )}
         </div>
         
@@ -604,7 +656,7 @@ const ItemTracker: React.FC = () => {
             </div>
             
             {/* Pagination */}
-            <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700">
+            <div className="bg-gray-50 dark:bg-gray-700">
               {renderPagination()}
             </div>
           </>
