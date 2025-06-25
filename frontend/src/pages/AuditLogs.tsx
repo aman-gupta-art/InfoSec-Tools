@@ -20,7 +20,6 @@ interface ActivityLog {
 const AuditLogs: React.FC = () => {
   const { isAdmin } = useAuth();
   const [logs, setLogs] = useState<ActivityLog[]>([]);
-  const [filteredLogs, setFilteredLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -53,7 +52,6 @@ const AuditLogs: React.FC = () => {
       const pages = response.data.totalPages || Math.ceil(total / itemsPerPage);
       
       setLogs(logsData);
-      setFilteredLogs(logsData);
       setTotalLogs(total);
       setTotalPages(pages);
       
@@ -72,7 +70,6 @@ const AuditLogs: React.FC = () => {
       console.error('Error fetching activity logs:', err);
       setError('Failed to load activity logs. Please try again later.');
       setLogs([]);
-      setFilteredLogs([]);
       setTotalLogs(0);
       setTotalPages(1);
     } finally {
@@ -262,10 +259,30 @@ const AuditLogs: React.FC = () => {
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-32">Timestamp</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-28">User</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-28">Action</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Details</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer w-32">
+                  <div className="flex items-center justify-between">
+                    <span>Timestamp</span>
+                    <div className="h-4 w-4 ml-1 invisible"></div>
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer w-28">
+                  <div className="flex items-center justify-between">
+                    <span>User</span>
+                    <div className="h-4 w-4 ml-1 invisible"></div>
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer w-28">
+                  <div className="flex items-center justify-between">
+                    <span>Action</span>
+                    <div className="h-4 w-4 ml-1 invisible"></div>
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <span>Details</span>
+                    <div className="h-4 w-4 ml-1 invisible"></div>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -316,22 +333,25 @@ const AuditLogs: React.FC = () => {
                 )}
               </p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-700 dark:text-gray-300">Show</span>
               <select
-                className="border border-gray-300 dark:border-gray-600 rounded-md p-2 dark:bg-gray-800 dark:text-white"
+                className="form-input py-1 px-2 w-16"
                 value={itemsPerPage}
                 onChange={handleItemsPerPageChange}
               >
-                <option value={5}>5 per page</option>
-                <option value={10}>10 per page</option>
-                <option value={25}>25 per page</option>
-                <option value={50}>50 per page</option>
-                <option value={100}>100 per page</option>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
               </select>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <span className="text-sm text-gray-700 dark:text-gray-300">per page</span>
+              
+              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px ml-4" aria-label="Pagination">
                 <button
                   onClick={() => paginate(Math.max(1, currentPage - 1))}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={currentPage === 1}
                 >
                   <span className="sr-only">Previous</span>
@@ -363,7 +383,7 @@ const AuditLogs: React.FC = () => {
                 })}
                 <button
                   onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={currentPage === totalPages}
                 >
                   <span className="sr-only">Next</span>

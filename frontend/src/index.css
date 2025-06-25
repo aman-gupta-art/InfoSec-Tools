@@ -96,6 +96,10 @@ code {
     @apply bg-info-100 text-info-800 dark:bg-info-900/30 dark:text-info-300;
   }
   
+  .status-badge-primary {
+    @apply bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300;
+  }
+  
   /* Transitions */
   .transition-all-fast {
     @apply transition-all duration-200 ease-in-out;

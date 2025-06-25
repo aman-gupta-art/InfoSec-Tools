@@ -264,172 +264,185 @@ const AdminPanel: React.FC = () => {
             Add User
           </button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
-              <tr>
-                <th 
-                  scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort('username')}
-                >
-                  <div className="flex items-center">
-                    <span>Username</span>
-                    {getSortIcon('username')}
-                  </div>
-                </th>
-                <th 
-                  scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort('firstName')}
-                >
-                  <div className="flex items-center">
-                    <span>Name</span>
-                    {getSortIcon('firstName')}
-                  </div>
-                </th>
-                <th 
-                  scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort('role')}
-                >
-                  <div className="flex items-center">
-                    <span>Role</span>
-                    {getSortIcon('role')}
-                  </div>
-                </th>
-                <th 
-                  scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort('createdAt')}
-                >
-                  <div className="flex items-center">
-                    <span>Created At</span>
-                    {getSortIcon('createdAt')}
-                  </div>
-                </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  <div className="flex items-center justify-end">
-                    <span>Actions</span>
-                    <div className="h-4 w-4 ml-1 invisible"></div>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {users.length > 0 ? (
-                users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{user.username}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${user.role === 'admin' 
-                          ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' 
-                          : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}`}>
-                        {user.role}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        className="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 mr-4"
-                        onClick={() => handleEditClick(user)}
-                      >
-                        <PencilSquareIcon className="h-5 w-5" />
-                      </button>
-                      <button
-                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                        onClick={() => handleDeleteClick(user)}
-                      >
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
+        <div className="table-container">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th 
+                    scope="col" 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSort('username')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>Username</span>
+                      {getSortIcon('username')}
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSort('firstName')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>Name</span>
+                      {getSortIcon('firstName')}
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSort('role')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>Role</span>
+                      {getSortIcon('role')}
+                    </div>
+                  </th>
+                  <th 
+                    scope="col" 
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                    onClick={() => handleSort('createdAt')}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>Created At</span>
+                      {getSortIcon('createdAt')}
+                    </div>
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <div className="flex items-center justify-end">
+                      <span>Actions</span>
+                      <div className="h-4 w-4 ml-1 invisible"></div>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {users.length > 0 ? (
+                  users.map((user) => (
+                    <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{user.username}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                        {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <span className={`status-badge ${
+                          user.role === 'admin' 
+                            ? 'status-badge-primary' 
+                            : 'status-badge-info'}`}>
+                          {user.role}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex space-x-2 justify-end">
+                          <button
+                            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-200"
+                            onClick={() => handleEditClick(user)}
+                          >
+                            <PencilSquareIcon className="h-5 w-5" />
+                          </button>
+                          <button
+                            className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 transition-colors duration-200"
+                            onClick={() => handleDeleteClick(user)}
+                          >
+                            <TrashIcon className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
+                      {loading ? 'Loading users...' : 'No users found'}
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
-                    {loading ? 'Loading users...' : 'No users found'}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        
-        {/* Pagination controls */}
-        <div className="px-6 py-3 flex items-center justify-between bg-gray-800 dark:bg-gray-900 text-white">
-          <div className="text-sm">
-            Showing <span className="font-medium">{Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}</span> to{' '}
-            <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{' '}
-            <span className="font-medium">{totalItems}</span> results
+                )}
+              </tbody>
+            </table>
           </div>
           
-          <div className="flex items-center">
-            <span className="text-sm mr-2">Show</span>
-            <div className="relative inline-block">
-              <select
-                value={itemsPerPage}
-                onChange={handleItemsPerPageChange}
-                className="form-input appearance-none bg-gray-700 dark:bg-gray-800 border border-gray-600 text-white py-1 pl-3 pr-8 rounded-md"
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
-                <ChevronDownIcon className="h-4 w-4" />
+          {/* Pagination controls - Updated to match ServerInventory style */}
+          <div className="px-6 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+            <div className="flex-1 flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  {totalItems > 0 ? (
+                    <>
+                      Showing <span className="font-medium">{Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}</span> to{' '}
+                      <span className="font-medium">
+                        {Math.min(currentPage * itemsPerPage, totalItems)}
+                      </span>{' '}
+                      of <span className="font-medium">{totalItems}</span> results
+                    </>
+                  ) : (
+                    'No results found'
+                  )}
+                </p>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-700 dark:text-gray-300">Show</span>
+                <select
+                  className="form-input py-1 px-2 w-16"
+                  value={itemsPerPage}
+                  onChange={handleItemsPerPageChange}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+                <span className="text-sm text-gray-700 dark:text-gray-300">per page</span>
+              
+                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px ml-4" aria-label="Pagination">
+                  <button
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={currentPage === 1}
+                  >
+                    <span className="sr-only">Previous</span>
+                    &larr;
+                  </button>
+                  
+                  {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
+                    const pageToShow = currentPage <= 3 
+                      ? idx + 1 
+                      : currentPage >= totalPages - 2 
+                        ? totalPages - 4 + idx 
+                        : currentPage - 2 + idx;
+                    
+                    if (pageToShow > 0 && pageToShow <= totalPages) {
+                      return (
+                        <button
+                          key={pageToShow}
+                          onClick={() => handlePageChange(pageToShow)}
+                          className={`relative inline-flex items-center px-4 py-2 border ${
+                            currentPage === pageToShow
+                              ? 'bg-primary-600 text-white z-10 border-primary-600'
+                              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          {pageToShow}
+                        </button>
+                      );
+                    }
+                    return null;
+                  })}
+                  <button
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={currentPage === totalPages}
+                  >
+                    <span className="sr-only">Next</span>
+                    &rarr;
+                  </button>
+                </nav>
               </div>
             </div>
-            <span className="text-sm ml-2 mr-4">per page</span>
-            
-            <button
-              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-1 bg-gray-700 dark:bg-gray-800 border border-gray-600 rounded-md mx-1 disabled:opacity-50"
-            >
-              &#8592;
-            </button>
-            
-            {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
-              const pageToShow = currentPage <= 3 
-                ? idx + 1 
-                : currentPage >= totalPages - 2 
-                  ? totalPages - 4 + idx 
-                  : currentPage - 2 + idx;
-              
-              if (pageToShow > 0 && pageToShow <= totalPages) {
-                return (
-                  <button
-                    key={pageToShow}
-                    onClick={() => handlePageChange(pageToShow)}
-                    className={`px-3 py-1 mx-1 rounded-md ${
-                      currentPage === pageToShow
-                        ? 'bg-blue-600 text-white font-medium'
-                        : 'bg-gray-700 dark:bg-gray-800 text-white border border-gray-600 hover:bg-gray-600'
-                    }`}
-                  >
-                    {pageToShow}
-                  </button>
-                );
-              }
-              return null;
-            })}
-            
-            <button
-              onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 bg-gray-700 dark:bg-gray-800 border border-gray-600 rounded-md mx-1 disabled:opacity-50"
-            >
-              &#8594;
-            </button>
           </div>
         </div>
       </div>
