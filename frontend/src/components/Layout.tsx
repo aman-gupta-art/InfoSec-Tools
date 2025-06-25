@@ -41,7 +41,6 @@ const Layout: React.FC = () => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
     { name: 'Server Inventory', href: '/servers', icon: ServerIcon },
-    { name: 'Trackers', href: '/trackers', icon: DocumentTextIcon },
   ];
 
   // Admin only navigation items

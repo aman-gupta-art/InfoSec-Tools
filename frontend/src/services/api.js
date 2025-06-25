@@ -185,37 +185,4 @@ export const activityLogApi = {
   }
 };
 
-// Tracker related API calls
-export const trackerApi = {
-  // Get all trackers with pagination
-  getTrackers: async (params) => {
-    return api.get('/trackers', { params });
-  },
-  
-  // Get tracker items by parent ID
-  getTrackerItems: async (parentId) => {
-    return api.get(`/trackers/parent/${parentId}`);
-  },
-  
-  // Get a single tracker by ID
-  getTracker: async (id) => {
-    return api.get(`/trackers/${id}`);
-  },
-  
-  // Create a new tracker
-  createTracker: async (trackerData) => {
-    return api.post('/trackers', trackerData);
-  },
-  
-  // Update an existing tracker
-  updateTracker: async (id, trackerData) => {
-    return api.put(`/trackers/${id}`, trackerData);
-  },
-  
-  // Delete a tracker
-  deleteTracker: async (id) => {
-    return api.delete(`/trackers/${id}`);
-  }
-};
-
 export default api; 

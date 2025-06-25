@@ -7,8 +7,6 @@ import Dashboard from './pages/Dashboard.tsx';
 import ServerInventory from './pages/ServerInventory.tsx';
 import AdminPanel from './pages/AdminPanel.tsx';
 import AuditLogs from './pages/AuditLogs.tsx';
-import Trackers from './pages/Trackers.tsx';
-import ItemTracker from './pages/ItemTracker.tsx';
 import Layout from './components/Layout.tsx';
 import PrivateRoute from './components/PrivateRoute.tsx';
 import AdminRoute from './components/AdminRoute.tsx';
@@ -24,8 +22,6 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/servers" element={<ServerInventory />} />
-              <Route path="/trackers" element={<Trackers />} />
-              <Route path="/tracker/:id" element={<ItemTracker />} />
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminPanel />} />
                 <Route path="/audit-logs" element={<AuditLogs />} />
