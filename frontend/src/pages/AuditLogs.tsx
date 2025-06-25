@@ -32,6 +32,8 @@ const AuditLogs: React.FC = () => {
   const [exportLoading, setExportLoading] = useState(false);
   const [clearLoading, setClearLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [totalLogs, setTotalLogs] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Define fetchLogs with useCallback
   const fetchLogs = useCallback(async () => {
@@ -40,15 +42,20 @@ const AuditLogs: React.FC = () => {
       
       const response = await activityLogApi.getLogs({
         page: currentPage,
-        size: itemsPerPage,
+        limit: itemsPerPage,
         search: searchTerm,
         action: actionFilter
       });
       
+      // Expect an API response with { logs: [], totalItems: number, totalPages: number, currentPage: number }
       const logsData = Array.isArray(response.data.logs) ? response.data.logs : [];
+      const total = response.data.totalItems || 0; // Use totalItems from API response
+      const pages = response.data.totalPages || Math.ceil(total / itemsPerPage);
       
       setLogs(logsData);
       setFilteredLogs(logsData);
+      setTotalLogs(total);
+      setTotalPages(pages);
       
       // Extract all unique actions for the dropdown
       if (logsData.length > 0) {
@@ -66,6 +73,8 @@ const AuditLogs: React.FC = () => {
       setError('Failed to load activity logs. Please try again later.');
       setLogs([]);
       setFilteredLogs([]);
+      setTotalLogs(0);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
@@ -75,6 +84,18 @@ const AuditLogs: React.FC = () => {
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
+
+  // Handle action filter change
+  const handleActionFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setActionFilter(e.target.value);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
 
   // Handle export logs
   const handleExport = async () => {
@@ -137,13 +158,12 @@ const AuditLogs: React.FC = () => {
     return date.toLocaleString();
   };
 
-  // Pagination calculations
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const totalPages = Math.ceil((Array.isArray(filteredLogs) ? filteredLogs.length : 0) / itemsPerPage);
-
   // Change page handler
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber: number) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   // Handle items per page change
   const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -188,7 +208,7 @@ const AuditLogs: React.FC = () => {
                 placeholder="Search logs..."
                 className="form-input pl-10"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
               />
               <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
@@ -199,7 +219,7 @@ const AuditLogs: React.FC = () => {
             <select 
               className="form-input"
               value={actionFilter}
-              onChange={(e) => setActionFilter(e.target.value)}
+              onChange={handleActionFilterChange}
             >
               <option value="">All Actions</option>
               {allActions.map((action) => (
@@ -283,11 +303,17 @@ const AuditLogs: React.FC = () => {
           <div className="flex-1 flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to{' '}
-                <span className="font-medium">
-                  {Math.min(indexOfLastItem, filteredLogs.length)}
-                </span>{' '}
-                of <span className="font-medium">{filteredLogs.length}</span> results
+                {totalLogs > 0 ? (
+                  <>
+                    Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                    <span className="font-medium">
+                      {Math.min(currentPage * itemsPerPage, totalLogs)}
+                    </span>{' '}
+                    of <span className="font-medium">{totalLogs}</span> results
+                  </>
+                ) : (
+                  'No results found'
+                )}
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -300,6 +326,7 @@ const AuditLogs: React.FC = () => {
                 <option value={10}>10 per page</option>
                 <option value={25}>25 per page</option>
                 <option value={50}>50 per page</option>
+                <option value={100}>100 per page</option>
               </select>
               <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                 <button

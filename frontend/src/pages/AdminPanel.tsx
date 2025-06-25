@@ -363,83 +363,73 @@ const AdminPanel: React.FC = () => {
         </div>
         
         {/* Pagination controls */}
-        <div className="px-6 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-          <div className="flex-1 flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                {totalItems > 0 ? (
-                  <>
-                    Showing <span className="font-medium">{Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}</span> to{' '}
-                    <span className="font-medium">
-                      {Math.min(currentPage * itemsPerPage, totalItems)}
-                    </span>{' '}
-                    of <span className="font-medium">{totalItems}</span> users
-                  </>
-                ) : (
-                  'No users found'
-                )}
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-700 dark:text-gray-300">Show</span>
-                <select
-                  className="form-input py-1 px-2 w-16"
-                  value={itemsPerPage}
-                  onChange={handleItemsPerPageChange}
-                >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                  <option value={50}>50</option>
-                </select>
-                <span className="text-sm text-gray-700 dark:text-gray-300">per page</span>
+        <div className="px-6 py-3 flex items-center justify-between bg-gray-800 dark:bg-gray-900 text-white">
+          <div className="text-sm">
+            Showing <span className="font-medium">{Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}</span> to{' '}
+            <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{' '}
+            <span className="font-medium">{totalItems}</span> results
+          </div>
+          
+          <div className="flex items-center">
+            <span className="text-sm mr-2">Show</span>
+            <div className="relative inline-block">
+              <select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                className="form-input appearance-none bg-gray-700 dark:bg-gray-800 border border-gray-600 text-white py-1 pl-3 pr-8 rounded-md"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+                <ChevronDownIcon className="h-4 w-4" />
               </div>
-              {totalPages > 1 && (
-                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                  <button
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={currentPage === 1}
-                  >
-                    <span className="sr-only">Previous</span>
-                    &larr;
-                  </button>
-                  {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
-                    const pageToShow = currentPage <= 3 
-                      ? idx + 1 
-                      : currentPage >= totalPages - 2 
-                        ? totalPages - 4 + idx 
-                        : currentPage - 2 + idx;
-                    
-                    if (pageToShow > 0 && pageToShow <= totalPages) {
-                      return (
-                        <button
-                          key={pageToShow}
-                          onClick={() => handlePageChange(pageToShow)}
-                          className={`relative inline-flex items-center px-4 py-2 border ${
-                            currentPage === pageToShow
-                              ? 'bg-primary-600 text-white z-10 border-primary-600'
-                              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
-                          }`}
-                        >
-                          {pageToShow}
-                        </button>
-                      );
-                    }
-                    return null;
-                  })}
-                  <button
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={currentPage === totalPages}
-                  >
-                    <span className="sr-only">Next</span>
-                    &rarr;
-                  </button>
-                </nav>
-              )}
             </div>
+            <span className="text-sm ml-2 mr-4">per page</span>
+            
+            <button
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 bg-gray-700 dark:bg-gray-800 border border-gray-600 rounded-md mx-1 disabled:opacity-50"
+            >
+              &#8592;
+            </button>
+            
+            {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
+              const pageToShow = currentPage <= 3 
+                ? idx + 1 
+                : currentPage >= totalPages - 2 
+                  ? totalPages - 4 + idx 
+                  : currentPage - 2 + idx;
+              
+              if (pageToShow > 0 && pageToShow <= totalPages) {
+                return (
+                  <button
+                    key={pageToShow}
+                    onClick={() => handlePageChange(pageToShow)}
+                    className={`px-3 py-1 mx-1 rounded-md ${
+                      currentPage === pageToShow
+                        ? 'bg-blue-600 text-white font-medium'
+                        : 'bg-gray-700 dark:bg-gray-800 text-white border border-gray-600 hover:bg-gray-600'
+                    }`}
+                  >
+                    {pageToShow}
+                  </button>
+                );
+              }
+              return null;
+            })}
+            
+            <button
+              onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 bg-gray-700 dark:bg-gray-800 border border-gray-600 rounded-md mx-1 disabled:opacity-50"
+            >
+              &#8594;
+            </button>
           </div>
         </div>
       </div>
