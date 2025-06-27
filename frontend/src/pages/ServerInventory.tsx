@@ -1004,7 +1004,7 @@ const ServerInventory: React.FC = () => {
       </div>
       
       {/* Server table */}
-      <div className="table-container">
+      <div className="table-container rounded-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">
@@ -1209,7 +1209,7 @@ const ServerInventory: React.FC = () => {
         </div>
         
         {/* Pagination controls - Updated to match AuditLogs */}
-        <div className="px-6 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+        <div className="px-6 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 rounded-b-lg">
           <div className="flex-1 flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-700 dark:text-gray-300">

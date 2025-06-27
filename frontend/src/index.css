@@ -72,7 +72,7 @@ code {
   
   /* Table styles */
   .table-container {
-    @apply bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg;
+    @apply bg-white dark:bg-gray-800 shadow overflow-hidden rounded-lg;
   }
   
   /* Status badge styles */
