@@ -410,41 +410,44 @@ const PimUsers: React.FC = () => {
 
   // Handle import file upload
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      return;
+    }
+    
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    
     try {
-      // Clear previous messages
+      setLoading(true);
       setFileUploadError(null);
       setFileUploadSuccess(null);
-
-      const file = event.target.files?.[0];
-      if (!file) {
-        return;
-      }
-
-      // Create form data
-      const formData = new FormData();
-      formData.append('file', file);
-
-      // Show loading state
-      setLoading(true);
-
-      // Upload the file
+      
+      // Call API to import data from Excel
       const response = await pimUserApi.importPimUsers(formData);
-
+      
       // Show success message
-      setFileUploadSuccess(response.data.message || 'PIM users imported successfully!');
-
+      setFileUploadSuccess(`Import successful: ${response.data.success} PIM users added, ${response.data.failed} failed.`);
+      setTimeout(() => setFileUploadSuccess(null), 3000);
+      
       // Refresh the data
       fetchPimUsers();
       fetchFilterOptions();
-
+      
     } catch (error: any) {
       console.error('Error uploading file:', error);
-      setFileUploadError(error.response?.data?.message || 'Failed to import PIM users. Please check your file and try again.');
+      
+      let errorMessage = 'Failed to import PIM users. Please try again later.';
+      if (error.response && error.response.data && error.response.data.message) {
+        errorMessage = `Failed to import PIM users: ${error.response.data.message}`;
+      }
+      
+      setFileUploadError(errorMessage);
+      setTimeout(() => setFileUploadError(null), 5000);
     } finally {
       setLoading(false);
-
-      // Clear the file input
-      if (event.target.value) {
+      // Reset file input
+      if (event.target) {
         event.target.value = '';
       }
     }
@@ -491,10 +494,12 @@ const PimUsers: React.FC = () => {
       document.body.removeChild(a);
       
       setFileUploadSuccess('PIM users exported successfully!');
+      setTimeout(() => setFileUploadSuccess(null), 3000);
       
     } catch (error) {
       console.error('Error exporting data:', error);
       setFileUploadError('Failed to export PIM users. Please try again later.');
+      setTimeout(() => setFileUploadError(null), 5000);
     } finally {
       setLoading(false);
     }
@@ -532,6 +537,7 @@ const PimUsers: React.FC = () => {
       document.body.removeChild(a);
       
       setFileUploadSuccess('Template downloaded successfully!');
+      setTimeout(() => setFileUploadSuccess(null), 3000);
       
     } catch (error: any) {
       console.error('Error downloading template:', error);
@@ -542,6 +548,7 @@ const PimUsers: React.FC = () => {
       }
       
       setFileUploadError(errorMessage);
+      setTimeout(() => setFileUploadError(null), 5000);
     } finally {
       setLoading(false);
     }
@@ -577,6 +584,7 @@ const PimUsers: React.FC = () => {
       
       // Show success message
       setFileUploadSuccess('PIM user deleted successfully!');
+      setTimeout(() => setFileUploadSuccess(null), 3000);
       
       // Refresh the data
       fetchPimUsers();
@@ -585,6 +593,7 @@ const PimUsers: React.FC = () => {
     } catch (error) {
       console.error('Error deleting PIM user:', error);
       setFileUploadError('Failed to delete PIM user. Please try again later.');
+      setTimeout(() => setFileUploadError(null), 5000);
     } finally {
       setLoading(false);
     }
@@ -610,6 +619,7 @@ const PimUsers: React.FC = () => {
       
       // Show success message
       setFileUploadSuccess('PIM user updated successfully!');
+      setTimeout(() => setFileUploadSuccess(null), 3000);
       
       // Refresh the data
       fetchPimUsers();
@@ -618,6 +628,7 @@ const PimUsers: React.FC = () => {
     } catch (error) {
       console.error('Error updating PIM user:', error);
       setFileUploadError('Failed to update PIM user. Please try again later.');
+      setTimeout(() => setFileUploadError(null), 5000);
     } finally {
       setLoading(false);
     }
@@ -641,6 +652,7 @@ const PimUsers: React.FC = () => {
       
       // Show success message
       setFileUploadSuccess('PIM user added successfully!');
+      setTimeout(() => setFileUploadSuccess(null), 3000);
       
       // Refresh the data
       fetchPimUsers();
@@ -649,6 +661,7 @@ const PimUsers: React.FC = () => {
     } catch (error) {
       console.error('Error adding PIM user:', error);
       setFileUploadError('Failed to add PIM user. Please try again later.');
+      setTimeout(() => setFileUploadError(null), 5000);
     } finally {
       setLoading(false);
     }
@@ -658,8 +671,6 @@ const PimUsers: React.FC = () => {
   const handleClearAllPimUsers = async () => {
     try {
       setLoading(true);
-      setFileUploadError(null);
-      setFileUploadSuccess(null);
       
       // Call API to clear all PIM users
       await pimUserApi.clearAllPimUsers();
@@ -669,15 +680,16 @@ const PimUsers: React.FC = () => {
       
       // Show success message
       setFileUploadSuccess('All PIM users cleared successfully!');
+      setTimeout(() => setFileUploadSuccess(null), 3000);
       
       // Refresh the data
       fetchPimUsers();
       fetchFilterOptions();
       
     } catch (error) {
-      console.error('Error clearing all PIM users:', error);
+      console.error('Error clearing PIM users:', error);
       setFileUploadError('Failed to clear all PIM users. Please try again later.');
-      setShowClearAllConfirmation(false);
+      setTimeout(() => setFileUploadError(null), 5000);
     } finally {
       setLoading(false);
     }
