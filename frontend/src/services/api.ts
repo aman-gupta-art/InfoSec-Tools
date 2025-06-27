@@ -89,6 +89,81 @@ export const serverApi = {
   }
 };
 
+// PIM User related API calls
+export const pimUserApi = {
+  // Get all PIM users with pagination and filters
+  getPimUsers: async (params?: any) => {
+    return api.get('/pim-users', { params });
+  },
+  
+  // Get a single PIM user by ID
+  getPimUser: async (id: number) => {
+    return api.get(`/pim-users/${id}`);
+  },
+  
+  // Create a new PIM user
+  createPimUser: async (pimUserData: any) => {
+    return api.post('/pim-users', pimUserData);
+  },
+  
+  // Update an existing PIM user
+  updatePimUser: async (id: number, pimUserData: any) => {
+    return api.put(`/pim-users/${id}`, pimUserData);
+  },
+  
+  // Delete a PIM user
+  deletePimUser: async (id: number) => {
+    return api.delete(`/pim-users/${id}`);
+  },
+  
+  // Import PIM users from Excel file
+  importPimUsers: async (formData: FormData) => {
+    return api.post('/pim-users/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  // Get import template
+  getImportTemplate: async () => {
+    try {
+      return api.get('/pim-users/template', {
+        responseType: 'blob',
+        headers: {
+          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+      });
+    } catch (error) {
+      console.error('API call error in getImportTemplate:', error);
+      throw error;
+    }
+  },
+  
+  // Export PIM users to Excel
+  exportPimUsers: async (params?: any) => {
+    return api.get('/pim-users/export', {
+      params,
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+  },
+  
+  // Get distinct values for filters
+  getFilterOptions: async (fields?: string[]) => {
+    return api.get('/pim-users/filter-options', {
+      params: { fields }
+    });
+  },
+  
+  // Clear all PIM users (admin only)
+  clearAllPimUsers: async () => {
+    return api.delete('/pim-users/clear-all');
+  }
+};
+
 // User related API calls
 export const userApi = {
   // Get all users with pagination, sorting, and search

@@ -439,7 +439,13 @@ exports.importServers = async (req, res) => {
     const workbook = XLSX.readFile(req.file.path);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
-    const data = XLSX.utils.sheet_to_json(worksheet);
+    
+    // Parse dates properly when reading from Excel
+    const data = XLSX.utils.sheet_to_json(worksheet, {
+      raw: false,
+      dateNF: 'yyyy-mm-dd',
+      cellDates: true
+    });
 
     if (data.length === 0) {
       return res.status(400).send({
@@ -466,26 +472,31 @@ exports.importServers = async (req, res) => {
           continue;
         }
 
-        // Create server
+        // Handle any date fields to ensure they're valid
+        // For server model, we don't have explicit date fields other than createdAt/updatedAt
+        // which are handled automatically by Sequelize
+
+        // Create server with validated data
         const server = await Server.create({
           ip: row.ip,
           hostname: row.hostname,
           operatingSystem: row.operatingSystem,
-          serverRole: row.serverRole,
-          serverType: row.serverType,
-          applicationName: row.applicationName,
-          applicationSPOC: row.applicationSPOC,
-          applicationOwner: row.applicationOwner,
-          platform: row.platform,
-          location: row.location,
-          manufacturer: row.manufacturer,
-          ram: row.ram,
-          cpu: row.cpu,
+          serverRole: row.serverRole || null,
+          serverType: row.serverType || null,
+          applicationName: row.applicationName || null,
+          applicationSPOC: row.applicationSPOC || null,
+          applicationOwner: row.applicationOwner || null,
+          platform: row.platform || null,
+          location: row.location || null,
+          manufacturer: row.manufacturer || null,
+          ram: row.ram || null,
+          cpu: row.cpu || null,
           status: row.status ? row.status.toLowerCase() : 'new'
         });
 
         results.success++;
       } catch (err) {
+        console.error("Error importing row:", err);
         results.failed++;
         results.errors.push({
           row: JSON.stringify(row),
@@ -508,6 +519,8 @@ exports.importServers = async (req, res) => {
 
     res.send(results);
   } catch (error) {
+    console.error("Server import error:", error);
+    
     // Clean up file if it exists
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);

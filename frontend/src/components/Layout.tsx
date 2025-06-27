@@ -10,7 +10,10 @@ import {
   DocumentTextIcon,
   MoonIcon,
   SunIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../context/AuthContext.tsx';
 import { useTheme } from '../context/ThemeContext.tsx';
@@ -21,6 +24,7 @@ const Layout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [pimDropdownOpen, setPimDropdownOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -37,6 +41,11 @@ const Layout: React.FC = () => {
     }
   };
 
+  // Toggle PIM dropdown
+  const togglePimDropdown = () => {
+    setPimDropdownOpen(!pimDropdownOpen);
+  };
+
   // Navigation items
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: ChartBarIcon },
@@ -49,10 +58,18 @@ const Layout: React.FC = () => {
     { name: 'Audit Logs', href: '/audit-logs', icon: ClipboardDocumentListIcon },
   ];
 
+  // PIM Module dropdown items
+  const pimNavigation = [
+    { name: 'PIM Users', href: '/pim-users', icon: UserCircleIcon },
+  ];
+
   // Get user full name or username
   const userDisplayName = user?.firstName && user?.lastName
     ? `${user.firstName} ${user.lastName}`
     : user?.username;
+
+  // Check if the current location is within the PIM Module
+  const isInPimModule = pimNavigation.some(item => location.pathname === item.href);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -104,6 +121,62 @@ const Layout: React.FC = () => {
                     {item.name}
                   </Link>
                 ))}
+
+                {/* PIM Module Dropdown */}
+                <div className="relative">
+                  <button
+                    className={`w-full group flex items-center justify-between rounded-md py-2 px-2 text-base font-medium ${
+                      isInPimModule
+                        ? 'bg-primary-100 text-primary-900 dark:bg-primary-900 dark:text-primary-100'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700'
+                    }`}
+                    onClick={togglePimDropdown}
+                  >
+                    <div className="flex items-center">
+                      <DocumentTextIcon
+                        className={`mr-4 h-6 w-6 flex-shrink-0 ${
+                          isInPimModule
+                            ? 'text-primary-600 dark:text-primary-400'
+                            : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300'
+                        }`}
+                        aria-hidden="true"
+                      />
+                      PIM Module
+                    </div>
+                    {pimDropdownOpen ? (
+                      <ChevronUpIcon className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                  
+                  {pimDropdownOpen && (
+                    <div className="mt-1 pl-6">
+                      {pimNavigation.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={`group flex items-center rounded-md py-2 px-2 text-base font-medium ${
+                            location.pathname === item.href
+                              ? 'bg-primary-100 text-primary-900 dark:bg-primary-900 dark:text-primary-100'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700'
+                          }`}
+                          onClick={() => setSidebarOpen(false)}
+                        >
+                          <item.icon
+                            className={`mr-4 h-6 w-6 flex-shrink-0 ${
+                              location.pathname === item.href
+                                ? 'text-primary-600 dark:text-primary-400'
+                                : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300'
+                            }`}
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Admin navigation */}
                 {isAdmin() && adminNavigation.map((item) => (
@@ -165,6 +238,61 @@ const Layout: React.FC = () => {
                     {item.name}
                   </Link>
                 ))}
+
+                {/* PIM Module Dropdown */}
+                <div className="relative">
+                  <button
+                    className={`w-full group flex items-center justify-between rounded-md py-2 px-2 text-sm font-medium ${
+                      isInPimModule
+                        ? 'bg-primary-100 text-primary-900 dark:bg-primary-900 dark:text-primary-100'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700'
+                    }`}
+                    onClick={togglePimDropdown}
+                  >
+                    <div className="flex items-center">
+                      <DocumentTextIcon
+                        className={`mr-3 h-6 w-6 flex-shrink-0 ${
+                          isInPimModule
+                            ? 'text-primary-600 dark:text-primary-400'
+                            : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300'
+                        }`}
+                        aria-hidden="true"
+                      />
+                      PIM Module
+                    </div>
+                    {pimDropdownOpen ? (
+                      <ChevronUpIcon className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                  
+                  {pimDropdownOpen && (
+                    <div className="mt-1 pl-6">
+                      {pimNavigation.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={`group flex items-center rounded-md py-2 px-2 text-sm font-medium ${
+                            location.pathname === item.href
+                              ? 'bg-primary-100 text-primary-900 dark:bg-primary-900 dark:text-primary-100'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700'
+                          }`}
+                        >
+                          <item.icon
+                            className={`mr-3 h-6 w-6 flex-shrink-0 ${
+                              location.pathname === item.href
+                                ? 'text-primary-600 dark:text-primary-400'
+                                : 'text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300'
+                            }`}
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* Admin navigation */}
                 {isAdmin() && adminNavigation.map((item) => (

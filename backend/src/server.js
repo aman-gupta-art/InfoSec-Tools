@@ -20,12 +20,14 @@ const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const serverRoutes = require('./routes/server.routes');
 const activityLogRoutes = require('./routes/activityLog.routes');
+const pimUserRoutes = require('./routes/pimUser.routes');
 
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/servers', serverRoutes);
 app.use('/api/activity-logs', activityLogRoutes);
+app.use('/api/pim-users', pimUserRoutes);
 
 // Simple route for API health check
 app.get('/api/health', (req, res) => {
