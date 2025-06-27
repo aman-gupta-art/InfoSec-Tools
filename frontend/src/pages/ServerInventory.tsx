@@ -1230,7 +1230,7 @@ const ServerInventory: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-700 dark:text-gray-300">Show</span>
                 <select
-                  className="form-input py-1 px-2 w-16"
+                  className="form-input py-1 px-2 w-16 rounded-md"
                   value={itemsPerPage}
                   onChange={handleItemsPerPageChange}
                 >
@@ -1241,10 +1241,10 @@ const ServerInventory: React.FC = () => {
                 </select>
                 <span className="text-sm text-gray-700 dark:text-gray-300">per page</span>
               </div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <nav className="relative z-0 inline-flex rounded-lg shadow-sm" aria-label="Pagination">
                 <button
                   onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={currentPage === 1}
                 >
                   <span className="sr-only">Previous</span>
@@ -1276,7 +1276,7 @@ const ServerInventory: React.FC = () => {
                 })}
                 <button
                   onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={currentPage === totalPages}
                 >
                   <span className="sr-only">Next</span>
