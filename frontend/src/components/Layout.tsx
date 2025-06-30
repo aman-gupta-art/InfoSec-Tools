@@ -61,6 +61,7 @@ const Layout: React.FC = () => {
   // PIM Module dropdown items
   const pimNavigation = [
     { name: 'PIM Users', href: '/pim-users', icon: UserCircleIcon },
+    { name: 'PIM Servers', href: '/pim-servers', icon: ServerIcon },
   ];
 
   // Get user full name or username

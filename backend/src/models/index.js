@@ -25,6 +25,7 @@ db.users = require('./user.model')(sequelize, Sequelize);
 db.servers = require('./server.model')(sequelize, Sequelize);
 db.activityLogs = require('./activityLog.model')(sequelize, Sequelize);
 db.pimUsers = require('./pimUser.model')(sequelize, Sequelize);
+db.pimServers = require('./pimServer.model')(sequelize, Sequelize);
 
 // Define relationships
 db.users.hasMany(db.activityLogs);

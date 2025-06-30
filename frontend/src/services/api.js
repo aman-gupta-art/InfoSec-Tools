@@ -103,6 +103,151 @@ export const serverApi = {
   }
 };
 
+// PIM Server related API calls
+export const pimServerApi = {
+  // Get all PIM servers with pagination and filters
+  getPimServers: async (params) => {
+    return api.get('/pim-servers', { params });
+  },
+  
+  // Get a single PIM server by ID
+  getPimServer: async (id) => {
+    return api.get(`/pim-servers/${id}`);
+  },
+  
+  // Create a new PIM server
+  createPimServer: async (pimServerData) => {
+    return api.post('/pim-servers', pimServerData);
+  },
+  
+  // Update an existing PIM server
+  updatePimServer: async (id, pimServerData) => {
+    return api.put(`/pim-servers/${id}`, pimServerData);
+  },
+  
+  // Delete a PIM server
+  deletePimServer: async (id) => {
+    return api.delete(`/pim-servers/${id}`);
+  },
+  
+  // Import PIM servers from Excel file
+  importPimServers: async (formData) => {
+    return api.post('/pim-servers/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  // Get import template
+  getImportTemplate: async () => {
+    return api.get('/pim-servers/import-template', {
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+  },
+  
+  // Export PIM servers to Excel
+  exportPimServers: async (params) => {
+    return api.get('/pim-servers/export', {
+      params,
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+  },
+  
+  // Get distinct values for filters
+  getFilterOptions: async (fields) => {
+    return api.get('/pim-servers/filter-options', {
+      params: { fields }
+    });
+  },
+  
+  // Clear all PIM servers (admin only)
+  clearAllPimServers: async () => {
+    return api.delete('/pim-servers/clear-all');
+  }
+};
+
+// PIM User related API calls
+export const pimUserApi = {
+  // Get all PIM users with pagination and filters
+  getPimUsers: async (params) => {
+    return api.get('/pim-users', { params });
+  },
+  
+  // Get a single PIM user by ID
+  getPimUser: async (id) => {
+    return api.get(`/pim-users/${id}`);
+  },
+  
+  // Create a new PIM user
+  createPimUser: async (pimUserData) => {
+    return api.post('/pim-users', pimUserData);
+  },
+  
+  // Update an existing PIM user
+  updatePimUser: async (id, pimUserData) => {
+    return api.put(`/pim-users/${id}`, pimUserData);
+  },
+  
+  // Delete a PIM user
+  deletePimUser: async (id) => {
+    return api.delete(`/pim-users/${id}`);
+  },
+  
+  // Import PIM users from Excel file
+  importPimUsers: async (formData) => {
+    return api.post('/pim-users/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  // Get import template
+  getImportTemplate: async () => {
+    try {
+      return api.get('/pim-users/template', {
+        responseType: 'blob',
+        headers: {
+          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+      });
+    } catch (error) {
+      console.error('API call error in getImportTemplate:', error);
+      throw error;
+    }
+  },
+  
+  // Export PIM users to Excel
+  exportPimUsers: async (params) => {
+    return api.get('/pim-users/export', {
+      params,
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+  },
+  
+  // Get distinct values for filters
+  getFilterOptions: async (fields) => {
+    return api.get('/pim-users/filter-options', {
+      params: { fields }
+    });
+  },
+  
+  // Clear all PIM users (admin only)
+  clearAllPimUsers: async () => {
+    return api.delete('/pim-users/clear-all');
+  }
+};
+
 // User related API calls
 export const userApi = {
   // Get all users with pagination, sorting, and search

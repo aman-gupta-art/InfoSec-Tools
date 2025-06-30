@@ -89,6 +89,76 @@ export const serverApi = {
   }
 };
 
+// PIM Server related API calls
+export const pimServerApi = {
+  // Get all PIM servers with pagination and filters
+  getPimServers: async (params?: any) => {
+    return api.get('/pim-servers', { params });
+  },
+  
+  // Get a single PIM server by ID
+  getPimServer: async (id: number) => {
+    return api.get(`/pim-servers/${id}`);
+  },
+  
+  // Create a new PIM server
+  createPimServer: async (pimServerData: any) => {
+    return api.post('/pim-servers', pimServerData);
+  },
+  
+  // Update an existing PIM server
+  updatePimServer: async (id: number, pimServerData: any) => {
+    return api.put(`/pim-servers/${id}`, pimServerData);
+  },
+  
+  // Delete a PIM server
+  deletePimServer: async (id: number) => {
+    return api.delete(`/pim-servers/${id}`);
+  },
+  
+  // Import PIM servers from Excel file
+  importPimServers: async (formData: FormData) => {
+    return api.post('/pim-servers/import', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+  
+  // Get import template
+  getImportTemplate: async () => {
+    return api.get('/pim-servers/import-template', {
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+  },
+  
+  // Export PIM servers to Excel
+  exportPimServers: async (params?: any) => {
+    return api.get('/pim-servers/export', {
+      params,
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    });
+  },
+  
+  // Get distinct values for filters
+  getFilterOptions: async (fields?: string[]) => {
+    return api.get('/pim-servers/filter-options', {
+      params: { fields }
+    });
+  },
+  
+  // Clear all PIM servers (admin only)
+  clearAllPimServers: async () => {
+    return api.delete('/pim-servers/clear-all');
+  }
+};
+
 // PIM User related API calls
 export const pimUserApi = {
   // Get all PIM users with pagination and filters
